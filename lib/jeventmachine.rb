@@ -89,7 +89,16 @@ module EventMachine
   class JEM < com.rubyeventmachine.EmReactor
     def eventCallback a1, a2, a3, a4
       s = String.from_java_bytes(a3.array[a3.position...a3.limit]) if a3
-      EventMachine::event_callback a1, a2, s || a4
+      if EM.instance_variable_defined?("@error_handler")
+        error_handler = EM.instance_variable_get("@error_handler")
+        begin
+          EventMachine::event_callback a1, a2, s || a4
+        rescue StandardError => e
+          error_handler.call(e)
+        end
+      else
+        EventMachine::event_callback a1, a2, s || a4
+      end
       nil
     end
   end
