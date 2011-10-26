@@ -13,7 +13,7 @@ class TestUnbindReason < Test::Unit::TestCase
       }
       conn.pending_connect_timeout = 0.1
     }
-    assert_equal error, Errno::ETIMEDOUT
+    assert_equal Errno::ETIMEDOUT, error
   end
 
   def test_connect_refused
@@ -26,6 +26,6 @@ class TestUnbindReason < Test::Unit::TestCase
         end
       }
     }
-    assert_equal error, Errno::ECONNREFUSED
+    assert_equal Errno::ECONNREFUSED, error
   end
 end
