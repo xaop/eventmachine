@@ -331,9 +331,11 @@ public class EmReactor {
 			eventCallback (ec.getBinding(), EM_CONNECTION_UNBOUND, null);
 			ec.close();
 
-			EventableSocketChannel sc = (EventableSocketChannel) ec;
-			if (sc != null && sc.isAttached())
-				DetachedConnections.add (sc);
+			if (ec instanceof EventableSocketChannel) {
+				EventableSocketChannel sc = (EventableSocketChannel) ec;
+				if (sc != null && sc.isAttached())
+					DetachedConnections.add (sc);
+			}
 		}
 
 		ListIterator<EventableSocketChannel> i4 = DetachedConnections.listIterator(0);
