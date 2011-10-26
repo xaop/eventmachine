@@ -98,20 +98,22 @@ public class EmReactor {
 			throw new RuntimeException ("Could not open selector", e);
 		}
 
-		while (bRunReactor) {
-			runLoopbreaks();
-			if (!bRunReactor) break;
+		try {
+			while (bRunReactor) {
+				runLoopbreaks();
+				if (!bRunReactor) break;
 
-			runTimers();
-			if (!bRunReactor) break;
+				runTimers();
+				if (!bRunReactor) break;
 
-			removeUnboundConnections();
-			checkIO();
-			addNewConnections();
-			processIO();
+				removeUnboundConnections();
+				checkIO();
+				addNewConnections();
+				processIO();
+			}
+		} finally {
+			close();
 		}
-
-		close();
 	}
 
 	void addNewConnections() {
