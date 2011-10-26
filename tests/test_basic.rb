@@ -6,6 +6,10 @@ class TestBasic < Test::Unit::TestCase
     @port = next_port
   end
 
+  def teardown
+    EM.error_handler # Remove error handler if there is one
+  end
+
   def test_connection_class_cache
     mod = Module.new
     a, b = nil, nil
