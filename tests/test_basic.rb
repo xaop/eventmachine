@@ -247,24 +247,28 @@ class TestBasic < Test::Unit::TestCase
   end
 
   def test_fork_safe
-    return unless cpid = fork { exit! } rescue false
+    if RUBY_PLATFORM != "java"
+      return unless cpid = fork { exit! } rescue false
 
-    read, write = IO.pipe
-    EM.run do
-      cpid = fork do
-        write.puts "forked"
-        EM.run do
-          EM.next_tick do
-            write.puts "EM ran"
-            exit!
+      read, write = IO.pipe
+      EM.run do
+        cpid = fork do
+          write.puts "forked"
+          EM.run do
+            EM.next_tick do
+              write.puts "EM ran"
+              exit!
+            end
           end
         end
+        EM.stop
       end
-      EM.stop
+      Process.waitall
+      assert_equal "forked\n", read.readline
+      assert_equal "EM ran\n", read.readline
+    else
+      warn "fork not supported on JRuby, skipping a test in #{__FILE__}"
     end
-    Process.waitall
-    assert_equal "forked\n", read.readline
-    assert_equal "EM ran\n", read.readline
   ensure
     read.close rescue nil
     write.close rescue nil
