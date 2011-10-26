@@ -100,16 +100,21 @@ public class EmReactor {
 
 		try {
 			while (bRunReactor) {
-				runLoopbreaks();
-				if (!bRunReactor) break;
-
 				runTimers();
-				if (!bRunReactor) break;
+
+				// Timers can add things to next_tick_queue, if we don't runLoopbreaks
+				// then it's possible to go in checkIO without processing these
+				// The preferred behaviour would probably to only run the loop breaks
+				// if there is no IO
+				runLoopbreaks();
 
 				removeUnboundConnections();
 				checkIO();
 				addNewConnections();
 				processIO();
+
+				runLoopbreaks();
+				if (!bRunReactor) break;
 			}
 		} finally {
 			close();
