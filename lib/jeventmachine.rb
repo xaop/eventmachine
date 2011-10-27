@@ -277,6 +277,15 @@ module EventMachine
   def self.start_tls(sig)
   end
   def self.send_file_data(sig, filename)
+    sz = File.size(filename)
+    raise "file too large" if sz > 32*1024
+    data =
+      begin
+        File.read filename
+      rescue
+        ""
+      end
+    send_data sig, data, sz
   end
 
   class Connection
