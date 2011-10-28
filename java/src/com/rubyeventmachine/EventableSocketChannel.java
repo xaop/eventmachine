@@ -61,7 +61,7 @@ public class EventableSocketChannel implements EventableChannel {
 	boolean bAttached;
 	boolean bNotifyReadable;
 	boolean bNotifyWritable;
-	
+
 	SSLEngine sslEngine;
 	SSLContext sslContext;
 
@@ -77,7 +77,7 @@ public class EventableSocketChannel implements EventableChannel {
 		bNotifyWritable = false;
 		outboundQ = new LinkedList<ByteBuffer>();
 	}
-	
+
 	public long getBinding() {
 		return binding;
 	}
@@ -155,7 +155,7 @@ public class EventableSocketChannel implements EventableChannel {
 
 		channel = null;
 	}
-	
+
 	public void scheduleOutboundData (ByteBuffer bb) {
 		if (!bCloseScheduled && bb.remaining() > 0) {
 			if (sslEngine != null) {
@@ -175,11 +175,11 @@ public class EventableSocketChannel implements EventableChannel {
 			updateEvents();
 		}
 	}
-	
+
 	public void scheduleOutboundDatagram (ByteBuffer bb, String recipAddress, int recipPort) {
 		throw new RuntimeException ("datagram sends not supported on this channel");
 	}
-	
+
 	/**
 	 * Called by the reactor when we have selected readable.
 	 */
@@ -229,7 +229,7 @@ public class EventableSocketChannel implements EventableChannel {
 		bConnectPending = true;
 		updateEvents();
 	}
-	
+
 	/**
 	 * Called by the reactor when we have selected connectable.
 	 * Return false to indicate an error that should cause the connection to close.
@@ -241,7 +241,7 @@ public class EventableSocketChannel implements EventableChannel {
 		updateEvents();
 		return true;
 	}
-	
+
 	public boolean scheduleClose (boolean afterWriting) {
 		// TODO: What the hell happens here if bConnectPending is set?
 		if (!afterWriting)
@@ -271,7 +271,7 @@ public class EventableSocketChannel implements EventableChannel {
 		}
 		System.out.println ("Starting TLS");
 	}
-	
+
 	public ByteBuffer dispatchInboundData (ByteBuffer bb) throws SSLException {
 		if (sslEngine != null) {
 			if (true) throw new RuntimeException ("TLS currently unimplemented");

@@ -39,7 +39,7 @@ import java.io.*;
 import java.net.*;
 
 public class EventableDatagramChannel implements EventableChannel {
-	
+
 	class Packet {
 		public ByteBuffer bb;
 		public SocketAddress recipient;
@@ -48,14 +48,14 @@ public class EventableDatagramChannel implements EventableChannel {
 			recipient = _recipient;
 		}
 	}
-	
+
 	DatagramChannel channel;
 	long binding;
 	Selector selector;
 	boolean bCloseScheduled;
 	LinkedList<Packet> outboundQ;
 	SocketAddress returnAddress;
-	
+
 
 	public EventableDatagramChannel (DatagramChannel dc, long _binding, Selector sel) throws ClosedChannelException {
 		channel = dc;
@@ -63,41 +63,41 @@ public class EventableDatagramChannel implements EventableChannel {
 		selector = sel;
 		bCloseScheduled = false;
 		outboundQ = new LinkedList<Packet>();
-		
+
 		dc.register(selector, SelectionKey.OP_READ, this);
 	}
 
 	public void scheduleOutboundData (ByteBuffer bb) {
- 		try {
+		try {
 			if ((!bCloseScheduled) && (bb.remaining() > 0)) {
 				outboundQ.addLast(new Packet(bb, returnAddress));
- 				channel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ, this);
+				channel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ, this);
 			}
 		} catch (ClosedChannelException e) {
 			throw new RuntimeException ("no outbound data");			
 		}
 	}
-	
+
 	public void scheduleOutboundDatagram (ByteBuffer bb, String recipAddress, int recipPort) {
- 		try {
+		try {
 			if ((!bCloseScheduled) && (bb.remaining() > 0)) {
 				outboundQ.addLast(new Packet (bb, new InetSocketAddress (recipAddress, recipPort)));
- 				channel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ, this);
+				channel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ, this);
 			}
 		} catch (ClosedChannelException e) {
 			throw new RuntimeException ("no outbound data");			
 		}
 	}
-	
+
 	public boolean scheduleClose (boolean afterWriting) {
 		System.out.println ("NOT SCHEDULING CLOSE ON DATAGRAM");
 		return false;
 	}
-	
+
 	public void startTls() {
 		throw new RuntimeException ("TLS is unimplemented on this Channel");
 	}
-	
+
 	public long getBinding() {
 		return binding;
 	}
@@ -116,7 +116,7 @@ public class EventableDatagramChannel implements EventableChannel {
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public void readInboundData (ByteBuffer dst) {
 		returnAddress = null;
 		try {
@@ -128,7 +128,7 @@ public class EventableDatagramChannel implements EventableChannel {
 			// and presumably do the right thing.
 		}
 	}
-	
+
 	public boolean writeOutboundData() {
 		while (!outboundQ.isEmpty()) {
 			Packet p = outboundQ.getFirst();

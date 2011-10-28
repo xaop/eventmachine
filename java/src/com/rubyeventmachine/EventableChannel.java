@@ -34,19 +34,19 @@ import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 
 public interface EventableChannel {
-	
+
 	public void scheduleOutboundData (ByteBuffer bb);
-	
+
 	public void scheduleOutboundDatagram (ByteBuffer bb, String recipAddress, int recipPort);
-	
+
 	public boolean scheduleClose (boolean afterWriting);
-	
+
 	public void startTls();
-	
+
 	public long getBinding();
-	
+
 	public void readInboundData (ByteBuffer dst) throws IOException;
-	
+
 	public void register() throws ClosedChannelException;
 
 	/**
@@ -54,7 +54,7 @@ public interface EventableChannel {
 	 * The idea is to free network resources.
 	 */
 	public void close();
-	
+
 	public boolean writeOutboundData() throws IOException;
 
 	public void setCommInactivityTimeout (long seconds);
