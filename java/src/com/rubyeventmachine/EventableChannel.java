@@ -56,6 +56,7 @@ public interface EventableChannel {
 	public void close();
 
 	public boolean writeOutboundData() throws IOException;
+	public int getOutboundDataSize() throws IOException;
 
 	public void setCommInactivityTimeout (long seconds);
 

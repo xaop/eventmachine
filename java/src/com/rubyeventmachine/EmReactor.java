@@ -467,6 +467,10 @@ public class EmReactor {
 		(Connections.get(sig)).scheduleOutboundDatagram( bb, recipAddress, recipPort);
 	}
 
+	public int getOutboundDataSize (long sig) throws IOException {
+		return (Connections.get(sig)).getOutboundDataSize();
+	}
+
 	public long connectTcpServer (String address, int port) {
 		return connectTcpServer(null, 0, address, port);
 	}

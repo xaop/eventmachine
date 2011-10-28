@@ -288,10 +288,21 @@ module EventMachine
     send_data sig, data, sz
   end
 
+  def self.report_connection_error_status(sig)
+    false # FIXME: actual implementation required
+  end
+
+  def self.get_outbound_data_size(sig)
+    @em.getOutboundDataSize sig
+  end
+
   class Connection
     def associate_callback_target sig
       # No-op for the time being
     end
+
+    def get_outbound_data_size
+      EM.get_outbound_data_size @signature
+    end
   end
 end
-

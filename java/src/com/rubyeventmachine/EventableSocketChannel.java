@@ -223,8 +223,20 @@ public class EventableSocketChannel implements EventableChannel {
 		// If anyone wants to close immediately, they're responsible for clearing
 		// the outbound queue.
 		return (bCloseScheduled && outboundQ.isEmpty()) ? false : true;
- 	}
-	
+	}
+
+	public int getOutboundDataSize() throws IOException {
+		if (outboundQ.isEmpty()) {
+			return 0;
+		} else {
+			int dataSize = 0;
+			for (ByteBuffer b : outboundQ) {
+				dataSize += b.remaining();
+			}
+			return dataSize;
+		}
+	}
+
 	public void setConnectPending() {
 		bConnectPending = true;
 		updateEvents();

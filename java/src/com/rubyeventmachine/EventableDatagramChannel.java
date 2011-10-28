@@ -162,11 +162,23 @@ public class EventableDatagramChannel implements EventableChannel {
 				channel.register(selector, SelectionKey.OP_READ, this);
 			} catch (ClosedChannelException e) {}
 		}
-		
+
 		// ALWAYS drain the outbound queue before triggering a connection close.
 		// If anyone wants to close immediately, they're responsible for clearing
 		// the outbound queue.
 		return (bCloseScheduled && outboundQ.isEmpty()) ? false : true;
+	}
+
+	public int getOutboundDataSize() throws IOException {
+		if (outboundQ.isEmpty()) {
+			return 0;
+		} else {
+			int dataSize = 0;
+			for (Packet p : outboundQ) {
+				dataSize += p.bb.remaining();
+			}
+			return dataSize;
+		}
 	}
 
 	public void setCommInactivityTimeout (long seconds) {
