@@ -385,13 +385,21 @@ public class EmReactor {
 	public long installOneshotTimer (int milliseconds) {
 		long s = createBinding();
 		long deadline = new Date().getTime() + milliseconds;
+		boolean wakeup = Timers.isEmpty(); // If IO is sleeping without timers it needs to be woken from that sleep to set a timeout
 
 		if (Timers.containsKey(deadline)) {
+			// FIXME: also wake up IO if first existing deadline falls after new deadline?
 			Timers.get(deadline).add(s);
 		} else {
 			ArrayList<Long> callbacks = new ArrayList<Long>();
 			callbacks.add(s);
 			Timers.put(deadline, callbacks);
+		}
+
+		if (wakeup) {
+			if (mySelector != null) {
+				mySelector.wakeup();
+			}
 		}
 
 		return s;
